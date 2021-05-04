@@ -1,0 +1,154 @@
+import 'package:bb_broker/CustomWidgets/large_blue_button.dart';
+import 'package:bb_broker/View/email_pwd_login_screen.dart';
+import 'package:flutter/material.dart';
+
+import '../CustomWidgets/svg_app_logo.dart';
+
+class IntroScreens extends StatefulWidget {
+  @override
+  _IntroScreensState createState() => _IntroScreensState();
+}
+
+class _IntroScreensState extends State<IntroScreens> {
+  int index = 0;
+  int _current = 0;
+  String swipeDirection;
+  List<String> headline = [
+    "Exclusive Member Access",
+    "Stay ahead of competition",
+    "Create your team"
+  ];
+  List<String> subText = [
+    "Your privilege pass to exclusive information, latest offers, events and builder communications.",
+    "Get every document or plan layouts you need to close that deal in an organised project wise manner.",
+    "Share exclusive member privilege with your team. Stay updated with their client visits and registrations."
+  ];
+  @override
+  Widget build(BuildContext context) {
+    ThemeData getTheme = Theme.of(context);
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppLogo(
+                        width: 80,
+                        height: 80,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Builders",
+                              style: getTheme.textTheme.headline6,
+                            ),
+                            Text(
+                              "Broadcast",
+                              style: getTheme.textTheme.headline6,
+                            ),
+                            Text(
+                              "Real Estate Simplified",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    GestureDetector(
+                      onPanUpdate: (DragUpdateDetails details) {
+                        swipeDirection =
+                            details.delta.dx < 0 ? 'left' : 'right';
+                      },
+                      onPanEnd: (details) {
+                        if (swipeDirection == 'right') {
+                          if (index == 0) return;
+                          setState(() {
+                            index--;
+                          });
+                        } else if (swipeDirection == 'left') {
+                          if (index > headline.length - 1) return;
+                          setState(() {
+                            index++;
+                          });
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          Text(
+                            headline[index],
+                            style: getTheme.textTheme.headline6
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: 0.7,
+                            child: Text(
+                              subText[index],
+                              textAlign: TextAlign.center,
+                              style: getTheme.textTheme.subtitle1,
+                              softWrap: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    LargeBlueButton(
+                      buttonTitle: 'get started',
+                      actionOnClick: () {
+                        Navigator.of(context).pushReplacement(
+                            new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    EmailPwdLoginScreen()));
+                      },
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: "Already have an account? ",
+                        style: TextStyle(
+                          color: Color(0xFF757575),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'Enter here',
+                            style: TextStyle(
+                              color: Color(0xFF00A9FF),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

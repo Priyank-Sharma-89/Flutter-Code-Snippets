@@ -1,0 +1,143 @@
+import 'package:bb_broker/CustomWidgets/large_blue_button.dart';
+import 'package:bb_broker/CustomWidgets/svg_app_logo.dart';
+import 'package:bb_broker/View/select_city_screen.dart';
+import 'package:bb_broker/providers/plan_and_city_provider.dart';
+import 'package:bb_broker/utils/constants/colors.dart';
+import 'package:bb_broker/utils/textCapitalization.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_tindercard/flutter_tindercard.dart';
+import 'package:provider/provider.dart';
+
+class PlansAndPricingScreen extends StatefulWidget {
+  @override
+  _PlansAndPricingScreenState createState() => _PlansAndPricingScreenState();
+}
+
+class _PlansAndPricingScreenState extends State<PlansAndPricingScreen>
+    with TickerProviderStateMixin {
+  List _plans = [
+    {"planName": "Pro", "amount": 500, "builder": 5, "validity": 2, "id": 2},
+    {"planName": "Free", "amount": 0, "builder": 1, "validity": 1, "id": 1},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    CardController swipeController = CardController();
+    ThemeData themeData = Theme.of(context);
+    Size size = MediaQuery.of(context).size;
+    String selectedPlan =
+        Provider.of<PlanAndCityProvider>(context).getSelectedPlan;
+    print(
+        'selected plan coming from provider in plans screen --- $selectedPlan');
+    return Scaffold(
+      backgroundColor: kPrimaryColor,
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: [
+                    AppLogo(),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      "Choose your plan",
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: size.height * 0.7,
+                  child: TinderSwapCard(
+                    totalNum: _plans.length,
+                    swipeUp: false,
+                    swipeDown: false,
+                    orientation: AmassOrientation.TOP,
+                    cardController: swipeController,
+                    maxWidth: 400,
+                    maxHeight: 400,
+                    minWidth: 300,
+                    minHeight: 300,
+                    swipeEdgeVertical: 0.5,
+                    allowVerticalMovement: false,
+                    cardBuilder: (context, index) => Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${_plans[index]['planName']} Plan',
+                                  style: themeData.textTheme.headline5.copyWith(
+                                      color: Color(0xFF3E506D),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Enjoy lifetime access to",
+                                  style: themeData.textTheme.subtitle2
+                                      .copyWith(color: Color(0xFF3E506D)),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("- ${_plans[index]['builder']} Builder",
+                                    style: themeData.textTheme.headline6
+                                        .copyWith(color: Color(0xFF3E506D))),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text("- Anywhere in India",
+                                    style: themeData.textTheme.headline6
+                                        .copyWith(color: Color(0xFF3E506D))),
+                              ],
+                            ),
+                            LargeBlueButton(
+                              buttonTitle: fullCapitalization('subscribe'),
+                              actionOnClick: () {
+                                Provider.of<PlanAndCityProvider>(context,
+                                        listen: false)
+                                    .setCurrentPlan(_plans[index]['planName']);
+                                Provider.of<PlanAndCityProvider>(context,
+                                        listen: false)
+                                    .setHasExistingPlan(true);
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SelectCityScreen()),
+                                    (Route<dynamic> route) => false);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
